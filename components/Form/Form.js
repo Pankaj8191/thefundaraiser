@@ -11,9 +11,6 @@ import { useState } from 'react';
 import React from 'react';
 import { create } from 'ipfs-http-client';
 
-const projectId = "0a5dd5afdd9043f3b67d773cfc85ea06";
-const projectSecret = "a0faea87533048a3a23869eb21ecd14b";
-
 
 const FormState = createContext();
 

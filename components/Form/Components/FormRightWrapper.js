@@ -1,3 +1,4 @@
+'use client'
 import styled from 'styled-components';
 import { FormState } from '../Form';
 import { useState, useContext } from 'react';
@@ -5,7 +6,14 @@ import { toast } from 'react-toastify';
 import {TailSpin} from 'react-loader-spinner'
 import {create as IPFSHTTPClient} from 'ipfs-http-client';
 
-const client = IPFSHTTPClient("https://ipfs.infura.io:5001/api/v0");
+const projectId = "0a5dd5afdd9043f3b67d773cfc85ea06";
+const projectSecret = "a0faea87533048a3a23869eb21ecd14b";
+
+const client = IPFSHTTPClient("https://ipfs.infura.io:5001/api/v0", {
+  headers: {
+    "Authorization": `Bearer ${projectId}`
+  }
+});
 
 const FormRightWrapper = () => {
   const Handler = useContext(FormState);
