@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import {TailSpin} from 'react-loader-spinner'
 import {create as IPFSHTTPClient} from 'ipfs-http-client';
 
-const client = IPFSHTTPClient("https://ipfs.infura.io:5001/apo/v0");
+const client = IPFSHTTPClient("https://ipfs.infura.io:5001/api/v0");
 
 const FormRightWrapper = () => {
   const Handler = useContext(FormState);
@@ -19,28 +19,35 @@ const FormRightWrapper = () => {
 
     if(Handler.form.story !== "") {
       try {
-        const added = await client.add(Handler.form.story);
-        Handler.setStoryUrl(added.path)
+        const storyBuffer = Buffer.from(Handler.form.story);
+        const added = await client.add(storyBuffer);
+        Handler.setStoryUrl(added.path);
       } catch (error) {
         toast.warn(`Error Uploading Story`);
       }
     }
 
-
-      if(Handler.image !== null) {
-          try {
-              const added = await client.add(Handler.image);
-              Handler.setImageUrl(added.path)
-          } catch (error) {
-            toast.warn(`Error Uploading Image`);
-          }
+    if(Handler.image !== null) {
+      try {
+        const file = Handler.image;
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          const buffer = Buffer.from(reader.result);
+          const added = await client.add(buffer);
+          Handler.setImageUrl(added.path);
+        };
+        reader.readAsArrayBuffer(file);
+      } catch (error) {
+        toast.warn(`Error Uploading Image`);
       }
+    }
 
-      setUploadLoading(false);
-      setUploaded(true);
-      Handler.setUploaded(true);
-      toast.success("Files Uploaded Sucessfully")
-}
+    setUploadLoading(false);
+    setUploaded(true);
+    Handler.setUploaded(true);
+    toast.success("Files Uploaded Successfully");
+  }
+
 
   return (
     <FormRight>

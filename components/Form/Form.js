@@ -9,6 +9,11 @@ import {toast} from 'react-toastify';
 import CampaignFactory from '../../artifacts/contracts/Campaign.sol/CampaignFactory.json'
 import { useState } from 'react';
 import React from 'react';
+import { create } from 'ipfs-http-client';
+
+const projectId = "0a5dd5afdd9043f3b67d773cfc85ea06";
+const projectSecret = "a0faea87533048a3a23869eb21ecd14b";
+
 
 const FormState = createContext();
 
@@ -33,7 +38,8 @@ const Form = () => {
             [e.target.name]: e.target.value
         })
     }
-
+console.log(storyUrl);
+console.log(imageUrl);
     const [image, setImage] = useState(null);
 
     const ImageHandler = (e) => {
@@ -55,26 +61,31 @@ const Form = () => {
             toast.warn("Files Upload Required")
         }
         else {        
-          setLoading(true);  
+          setLoading(true); 
+          
+            const ipfs = create({
+                host: "ipfs.infura.io",
+                port: 5001,
+                protocol: "https",
+            });
+        
+            // Upload image to IPFS
+            const imageData = await ipfs.add(image);
+            const imageUrl = `https://ipfs.infura.io/ipfs/${imageData.path}`;
+        
+            // Upload story to IPFS
+            const storyData = await ipfs.add(form.story);
+            setStoryUrl('https://ipfs.infura.io/ipfs/${storyData.path}');
+        
     
           const contract = new ethers.Contract(
             0xD01722881bf64B25eE6E132E4f10C8970404c876,
             CampaignFactory.abi,
             signer
           );
-            
+
           const CampaignAmount = ethers.utils.parseEther(form.requiredAmount);
-             // Upload image to IPFS
-        const imageBuffer = await image.arrayBuffer();
-        const imageResult = await ipfs.add(imageBuffer);
 
-        setImageUrl(imageResult.path);
-
-        // Upload story to IPFS
-        const storyBuffer = new TextEncoder().encode(form.story);
-        const storyResult = await ipfs.add(storyBuffer);
-
-        setStoryUrl(storyResult.path);
           const campaignData = await contract.createCampaign(
             form.campaignTitle,
             CampaignAmount,
