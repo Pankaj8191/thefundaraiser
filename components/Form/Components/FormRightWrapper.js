@@ -1,17 +1,15 @@
-import React from 'react'
+import styled from 'styled-components';
 import { FormState } from '../Form';
-import { useContext } from 'react';
-import styled from 'styled-components'
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { toast } from 'react-toastify';
-import { TailSpin } from 'react-loader-spinner';
-import { create as IPFSHTTPClient } from 'ipfs-http-client';
+import {TailSpin} from 'react-loader-spinner'
+import {create as IPFSHTTPClient} from 'ipfs-http-client';
 
-const client = IPFSHTTPClient("https://ipfs.infura.io:5001/api/v0");
+const client = IPFSHTTPClient("https://ipfs.infura.io:5001/apo/v0");
 
-
-const FormRightWrapper = (props) => {
+const FormRightWrapper = () => {
   const Handler = useContext(FormState);
+
   const [uploadLoading, setUploadLoading] = useState(false);
   const [uploaded, setUploaded] = useState(false);
 
@@ -36,14 +34,12 @@ const FormRightWrapper = (props) => {
           } catch (error) {
             toast.warn(`Error Uploading Image`);
           }
-         
       }
+
       setUploadLoading(false);
       setUploaded(true);
       Handler.setUploaded(true);
       toast.success("Files Uploaded Sucessfully")
-
-
 }
 
   return (
@@ -52,24 +48,23 @@ const FormRightWrapper = (props) => {
         <FormRow>
           <RowFirstInput>
             <label>Required Amount</label>
-            <Input onChange={Handler.FormHandler} value={Handler.form.requiredAmount} name="requiredAmount" type={"number"} placeholder='Required Amount'></Input>
+            <Input onChange={Handler.FormHandler} value={Handler.form.requiredAmount} name="requiredAmount" type={'number'} placeholder='Required Amount'></Input>
           </RowFirstInput>
-           <RowSecondInput>
-            <label>Choose category</label>
+          <RowSecondInput>
+            <label>Choose Category</label>
             <Select onChange={Handler.FormHandler} value={Handler.form.category} name="category">
               <option>Education</option>
               <option>Health</option>
               <option>Animal</option>
             </Select>
-          </RowSecondInput> 
-          <label>Required Amount</label>
+          </RowSecondInput>
         </FormRow>
       </FormInput>
       {/* Image */}
       <FormInput>
-         <label> Select Image </label>
-         <Image onChange={Handler.ImageHandler} type={'file'} accept='image/*'>
-         </Image>
+        <label>Select Image</label>
+        <Image alt="dapp" onChange={Handler.ImageHandler} type={'file'} accept='image/*'>
+        </Image>
       </FormInput>
       {uploadLoading == true ? <Button><TailSpin color='#fff' height={20} /></Button> :
         uploaded == false ? 
@@ -78,7 +73,7 @@ const FormRightWrapper = (props) => {
         </Button>
         : <Button style={{cursor: "no-drop"}}>Files uploaded Sucessfully</Button>
       }
-      <Button onClick={uploadedHandler.startCampaign}>
+      <Button onClick={Handler.startCampaign}>
         Start Campaign
       </Button>
     </FormRight>
@@ -86,7 +81,7 @@ const FormRightWrapper = (props) => {
 }
 
 const FormRight = styled.div`
-  width: 48%;
+  width:45%;
 `
 
 const FormInput = styled.div`
@@ -98,37 +93,34 @@ const FormInput = styled.div`
 
 const FormRow = styled.div`
   display: flex;
-  justify-content: space-between;
-  width: 100%;
-  gap:20px;
-  border: 1px soild black;
+  justify-content:space-between;
+  width:100% ;
 `
+
 const Input = styled.input`
-  padding:10px;
+  padding:15px;
   background-color:${(props) => props.theme.bgDiv} ;
-  color: dark ;
+  color:${(props) => props.theme.color} ;
   margin-top:4px;
-  border:1px solid black ;
+  border:none ;
   border-radius:8px ;
   outline:none;
   font-size:large;
-  
-`
-
+  width:100% ;
+` 
 
 const RowFirstInput = styled.div`
   display:flex ;
   flex-direction:column ;
   width:45% ;
-  border: 1px solid black;
 `
 
 const RowSecondInput = styled.div`
   display:flex ;
   flex-direction:column ;
   width:45% ;
-  border: 1px solid black;
 `
+
 const Select = styled.select`
   padding:15px;
   background-color:${(props) => props.theme.bgDiv} ;
@@ -140,6 +132,7 @@ const Select = styled.select`
   font-size:large;
   width:100% ;
 `
+
 const Image = styled.input`
   background-color:${(props) => props.theme.bgDiv} ;
   color:${(props) => props.theme.color} ;

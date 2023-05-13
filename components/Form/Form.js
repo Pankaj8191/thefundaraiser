@@ -1,30 +1,29 @@
 'use client'
-
 import styled from 'styled-components';
 import FormLeftWrapper from './Components/FormLeftWrapper'
 import FormRightWrapper from './Components/FormRightWrapper'
-import {createContext} from 'react';
-import React from "react";
-import { useState } from 'react';
-import { TailSpin } from 'react-loader-spinner';
-import ethers from 'ethers';
-import { toast } from 'react-toastify';
-import { env } from 'process';
+import { createContext } from 'react';
+import {TailSpin} from 'react-loader-spinner';
+import {ethers} from 'ethers';
+import {toast} from 'react-toastify';
 import CampaignFactory from '../../artifacts/contracts/Campaign.sol/CampaignFactory.json'
-const FormState= createContext();
+import { useState } from 'react';
+import React from 'react';
+
+const FormState = createContext();
 
 const Form = () => {
-
-    const[form, setForm] = useState({
+    const [form, setForm] = useState({
         campaignTitle: "",
         story: "",
-        requiredAmunt: "",
+        requiredAmount: "",
         category: "education",
     });
 
     const [loading, setLoading] = useState(false);
     const [address, setAddress] = useState("");
     const [uploaded, setUploaded] = useState(false);
+
     const [storyUrl, setStoryUrl] = useState();
     const [imageUrl, setImageUrl] = useState();
 
@@ -34,7 +33,8 @@ const Form = () => {
             [e.target.name]: e.target.value
         })
     }
-    const [image,setImage] = useState(null);
+
+    const [image, setImage] = useState(null);
 
     const ImageHandler = (e) => {
         setImage(e.target.files[0]);
@@ -58,14 +58,23 @@ const Form = () => {
           setLoading(true);  
     
           const contract = new ethers.Contract(
-            process.env.NEXT_PUBLIC_ADDRESS,
+            0xD01722881bf64B25eE6E132E4f10C8970404c876,
             CampaignFactory.abi,
             signer
           );
             
-
           const CampaignAmount = ethers.utils.parseEther(form.requiredAmount);
-    
+             // Upload image to IPFS
+        const imageBuffer = await image.arrayBuffer();
+        const imageResult = await ipfs.add(imageBuffer);
+
+        setImageUrl(imageResult.path);
+
+        // Upload story to IPFS
+        const storyBuffer = new TextEncoder().encode(form.story);
+        const storyResult = await ipfs.add(storyBuffer);
+
+        setStoryUrl(storyResult.path);
           const campaignData = await contract.createCampaign(
             form.campaignTitle,
             CampaignAmount,
@@ -80,50 +89,50 @@ const Form = () => {
         }
     }
 
-    return (
-        <FormState.Provider value={{form, setForm, image, setImage, ImageHandler, FormHandler, setImageUrl, setStoryUrl, startCampaign,setUploaded}} >
-      <FormWrapper>
-          <FormMain>
-              {loading == true ?
-                  address == "" ?
-                      <Spinner>
-                          <TailSpin height={60} />
-                      </Spinner> :
-                  <Address>
+  return (
+      <FormState.Provider value={{form, setForm, image, setImage, ImageHandler, FormHandler, setImageUrl, setStoryUrl, startCampaign, setUploaded}} >
+    <FormWrapper>
+        <FormMain>
+            {loading == true ?
+                address == "" ?
+                    <Spinner>
+                        <TailSpin height={60} />
+                    </Spinner> :
+                <Address>
                     <h1>Campagin Started Sucessfully!</h1>
-                        <h1>{address}</h1>
-                        <Button>
-                            Go To Campaign
-                        </Button>
-                  </Address>
-                  :
-                      <FormInputsWrapper>
-                          <FormLeftWrapper />
-                          <FormRightWrapper />
-                      </FormInputsWrapper>               
-              }
-          </FormMain>
-      </FormWrapper>
-      </FormState.Provider>
-    )
-  }
-
-
-
-const FormMain = styled.div`
-    width:80%;
-`
+                    <h1>{address}</h1>
+                    <Button>
+                        Go To Campaign
+                    </Button>
+                </Address>
+                :
+                    <FormInputsWrapper>
+                        <FormLeftWrapper />
+                        <FormRightWrapper />
+                    </FormInputsWrapper>               
+            }
+        </FormMain>
+    </FormWrapper>
+    </FormState.Provider>
+  )
+}
 
 const FormWrapper = styled.div`
     width: 100%;
     display:flex;
     justify-content:center;
 `
+
+const FormMain = styled.div`
+    width:80%;
+`
+
 const FormInputsWrapper = styled.div`
     display:flex;
     justify-content:space-between ;
     margin-top:45px ;
 `
+
 const Spinner = styled.div`
     width:100%;
     height:80vh;
@@ -141,6 +150,7 @@ const Address = styled.div`
     background-color:${(props) => props.theme.bgSubDiv} ;
     border-radius:8px;
 `
+
 const Button = styled.button`
     display: flex;
   justify-content:center;
@@ -157,5 +167,5 @@ const Button = styled.button`
   font-size:large ;
 `
 
-export default Form
-export  {FormState};
+export default Form;
+export {FormState};
