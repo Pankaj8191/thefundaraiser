@@ -65,7 +65,7 @@ const AppContext = createContext({
 });
 
 const lightTheme = {
-  bgColor: '#fff',
+  bgColor: '#2271b1',
   bgImage: '',
   color: '#000',
 };

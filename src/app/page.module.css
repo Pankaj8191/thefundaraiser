@@ -1,4 +1,4 @@
-.main {
+/* .main {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -108,7 +108,7 @@
   position: relative;
 }
 /* Enable hover only on non-touch devices */
-@media (hover: hover) and (pointer: fine) {
+/* @media (hover: hover) and (pointer: fine) {
   .card:hover {
     background: rgba(var(--card-rgb), 0.1);
     border: 1px solid rgba(var(--card-border-rgb), 0.15);
@@ -126,7 +126,7 @@
 }
 
 /* Mobile */
-@media (max-width: 700px) {
+/* @media (max-width: 700px) {
   .content {
     padding: 4rem;
   }
@@ -203,7 +203,7 @@
 }
 
 /* Tablet and Smaller Desktop */
-@media (min-width: 701px) and (max-width: 1120px) {
+/* @media (min-width: 701px) and (max-width: 1120px) {
   .grid {
     grid-template-columns: repeat(2, 50%);
   }
@@ -226,4 +226,56 @@
   to {
     transform: rotate(0deg);
   }
+} */ 
+.campaignlist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
 }
+
+.campaign {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.campaignimage {
+  height: 200px;
+  width: 500px;
+  max-width: 400px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.campaigntitle {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.campaignowner {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.campaigntimestamp {
+  font-size: 16px;
+  color: #999;
+  margin-bottom: 10px;
+}
+
+.campaignamount {
+  font-size: 20px;
+  color: #00b300;
+  margin-bottom: 10px;
+}
+
+.campaignaddress {
+  font-size: 14px;
+  color: #999;
+}
+

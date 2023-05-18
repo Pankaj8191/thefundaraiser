@@ -6,14 +6,18 @@ import { toast } from 'react-toastify';
 import {TailSpin} from 'react-loader-spinner'
 import {create as IPFSHTTPClient} from 'ipfs-http-client';
 
-const projectId = "0a5dd5afdd9043f3b67d773cfc85ea06";
-const projectSecret = "a0faea87533048a3a23869eb21ecd14b";
+const projectId = '2PmchRhJHr1CLd21KWDcOuFqhiC'
+const projectSecret = 'ac9b5960ea6f0dbb14bee36e04212835'
+const auth = 'Basic ' + Buffer.from(projectId + ":" + projectSecret).toString('base64')
 
-const client = IPFSHTTPClient("https://ipfs.infura.io:5001/api/v0", {
+const client = IPFSHTTPClient({
+  host:'ipfs.infura.io',
+  port:5001,
+  protocol: 'https',
   headers: {
-    "Authorization": `Bearer ${projectId}`
+    authorization: auth
   }
-});
+})
 
 const FormRightWrapper = () => {
   const Handler = useContext(FormState);
@@ -27,35 +31,28 @@ const FormRightWrapper = () => {
 
     if(Handler.form.story !== "") {
       try {
-        const storyBuffer = Buffer.from(Handler.form.story);
-        const added = await client.add(storyBuffer);
-        Handler.setStoryUrl(added.path);
+        const added = await client.add(Handler.form.story);
+        Handler.setStoryUrl(added.path)
       } catch (error) {
         toast.warn(`Error Uploading Story`);
       }
     }
 
-    if(Handler.image !== null) {
-      try {
-        const file = Handler.image;
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-          const buffer = Buffer.from(reader.result);
-          const added = await client.add(buffer);
-          Handler.setImageUrl(added.path);
-        };
-        reader.readAsArrayBuffer(file);
-      } catch (error) {
-        toast.warn(`Error Uploading Image`);
+
+      if(Handler.image !== null) {
+          try {
+              const added = await client.add(Handler.image);
+              Handler.setImageUrl(added.path)
+          } catch (error) {
+            toast.warn(`Error Uploading Image`);
+          }
       }
-    }
 
-    setUploadLoading(false);
-    setUploaded(true);
-    Handler.setUploaded(true);
-    toast.success("Files Uploaded Successfully");
-  }
-
+      setUploadLoading(false);
+      setUploaded(true);
+      Handler.setUploaded(true);
+      toast.success("Files Uploaded Sucessfully")
+}
 
   return (
     <FormRight>

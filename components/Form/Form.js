@@ -35,8 +35,7 @@ const Form = () => {
             [e.target.name]: e.target.value
         })
     }
-console.log(storyUrl);
-console.log(imageUrl);
+
     const [image, setImage] = useState(null);
 
     const ImageHandler = (e) => {
@@ -46,7 +45,9 @@ console.log(imageUrl);
     const startCampaign = async (e) => {
         e.preventDefault();
         const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const signer = provider.getSigner(accounts[0]);
+        
     
         if(form.campaignTitle === "") {
           toast.warn("Title Field Is Empty");
@@ -58,31 +59,16 @@ console.log(imageUrl);
             toast.warn("Files Upload Required")
         }
         else {        
-          setLoading(true); 
-          
-            const ipfs = create({
-                host: "ipfs.infura.io",
-                port: 5001,
-                protocol: "https",
-            });
-        
-            // Upload image to IPFS
-            const imageData = await ipfs.add(image);
-            const imageUrl = `https://ipfs.infura.io/ipfs/${imageData.path}`;
-        
-            // Upload story to IPFS
-            const storyData = await ipfs.add(form.story);
-            setStoryUrl('https://ipfs.infura.io/ipfs/${storyData.path}');
-        
+          setLoading(true);  
     
           const contract = new ethers.Contract(
-            0xD01722881bf64B25eE6E132E4f10C8970404c876,
+            '0x8761cC2B453E7B7b03f9028A2613e82c4A8A1476',
             CampaignFactory.abi,
             signer
           );
-
+            
           const CampaignAmount = ethers.utils.parseEther(form.requiredAmount);
-
+    
           const campaignData = await contract.createCampaign(
             form.campaignTitle,
             CampaignAmount,
